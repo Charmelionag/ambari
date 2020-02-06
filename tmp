@@ -1,0 +1,19 @@
+config.vm.define "datanode01" do |datanode01|
+  datanode01.vm.box = "bento/ubuntu-18.04"
+  datanode01.vm.network "private_network", ip: "192.168.33.10"
+  datanode01.vm.hostname = "datanode01"
+
+  datanode01.vm.provision "shell", inline: <<-SHELL
+    echo "\n192.168.33.01  namenode\n192.168.33.10  datanode01\n192.168.33.11  datanode02" >> /etc/hosts
+  SHELL
+end
+
+config.vm.define "datanode02" do |datanode02|
+  datanode02.vm.box = "bento/ubuntu-18.04"
+  datanode02.vm.network "private_network", ip: "192.168.33.11"
+  datanode02.vm.hostname = "datanode02"
+
+  datanode02.vm.provision "shell", inline: <<-SHELL
+    echo "\n192.168.33.01  namenode\n192.168.33.10  datanode01\n192.168.33.11  datanode02" >> /etc/hosts
+  SHELL
+end

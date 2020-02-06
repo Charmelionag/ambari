@@ -15,7 +15,7 @@ fi
 
 if [[ ! -f /home/vagrant/login.done ]]
 then
-  for f in namenode datanode01 datanode02
+  for f in namenode
   do
     ./login.expect $f
   done
@@ -31,3 +31,7 @@ sudo chown -R vagrant:vagrant /home/vagrant
 
 cd ansible
 ansible-playbook names.yml
+
+sudo ambari-server setup -s
+sudo echo "client.api.port=9999" | sudo tee --append /etc/ambari-server/conf/ambari.properties
+sudo ambari-server start
