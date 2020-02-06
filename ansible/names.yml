@@ -1,0 +1,38 @@
+---
+  - hosts: names
+    become: yes
+    tasks:
+      - name: install necessary binaries
+        apt: name={{item}} state=present update_cache=yes
+        with_items:
+          - curl
+          - unzip
+          - tar
+          - wget
+          - gcc
+          - ntp
+          - mysql-server
+          - python-mysqldb
+          - ambari-server
+
+      - name: update-rc ntp server
+        command: update-rc.d ntp defaults
+
+      - name: add fqdn
+        lineinfile: path=/etc/hosts regex='^127\.0\.1\.1' line="127.0.1.1 \t{{ ansible_hostname }}.cluster \t{{ ansible_hostname }}"
+
+      - name: add mysql database
+        mysql_db: name=hive state=present
+        notify: restart mysql
+
+      - name: add binding address
+        lineinfile: path=/etc/mysql/mysql.conf.d/mysqld.cnf regex=^bind-address line="bind-address = 0.0.0.0"
+        notify: restart mysql
+
+      - name: add mysql user
+        mysql_user: name=hive password=hive priv=hive.*:ALL state=present
+        notify: restart mysql
+
+    handlers:
+      - name: restart mysql
+        service: name=mysql state=restarted

@@ -1,0 +1,6 @@
+[names]
+namenode ansible_connection=local
+
+[datas]
+datanode01
+datanode02
